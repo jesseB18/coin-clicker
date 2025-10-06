@@ -11,14 +11,25 @@ body {
 
 .Main {
     display: flex;
-    gap: 200px;
-
+    gap: 50px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .left h2 {
     text-align: center;
     font-size: 30px;
     margin-bottom: 30px;
+}
+
+.right{
+    height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    padding-right: 10px;
+    width: 100%;
+
 }
 
 .yellow-text{
@@ -51,6 +62,8 @@ body {
     padding: 13px 20px;
     position: relative;
     background-color: gray;
+    box-sizing: border-box;
+
 }
 .mid-section h4{
     margin: 0;
