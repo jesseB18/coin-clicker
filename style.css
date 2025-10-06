@@ -104,18 +104,17 @@ section {
 }
 
 .next-level-info {
-    position: absolute;
-    top: 0;
-    left: 105%; /* rechts van de box */
-    width: 150px;
-    padding: 10px;
-    background-color: rgb(90, 89, 90);
-    color: white;
+    background-color: rgba(0, 0, 0, 0.75); /* semi-transparant zwart */
+    color: #FFD700; /* goudkleurige tekst, zoals je coins */
+    padding: 6px 10px;
+    border-radius: 6px;
     font-size: 14px;
-    text-align: center;
-    border-radius: 5px;
-    display: none;
+    font-weight: bold;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    white-space: nowrap;
     z-index: 1000;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
 }
 .upgrade:hover .next-level-info {
     display: block;

@@ -30,31 +30,15 @@ function formatNumber(num) {
     return Math.round(num);
 }
 
-// ----- COIN CLICK FUNCTIE MET DEBUG -----
+// ----- COIN CLICK FUNCTIE -----
 window.incrementCoin = function(event) {
-    // huidige cpc opslaan voor debug
-    let coinsThisClick = cpc;
-
-    // debug info in console
-    console.log('----- Click Debug -----');
-    console.log('Actuele cpc:', cpc);
-    console.log('Coins voor click:', parsedcoin);
-    console.log('Coins deze click:', coinsThisClick);
-
-    // voeg toe aan totaal
-    parsedcoin += coinsThisClick;
-    console.log('Coins na click:', parsedcoin); // laat totaal zien
-
+    parsedcoin += cpc;
     coin.innerHTML = formatNumber(parsedcoin);
 
-    // animatie van +X
     const div = document.createElement('div');
-    div.innerHTML = `+${formatNumber(coinsThisClick)}`; // exact hetzelfde aantal als daadwerkelijk
-
-    // positie van muis
+    div.innerHTML = `+${formatNumber(cpc)}`;
     const x = event.clientX;
     const y = event.clientY;
-
     div.style.cssText = `
         color: white; 
         position: absolute; 
@@ -68,14 +52,9 @@ window.incrementCoin = function(event) {
     `;
     document.body.appendChild(div);
     div.classList.add('fade-up');
-
     setTimeout(() => div.remove(), 800);
 };
 
-
-
-
-// Eventlistener voor klikken op coin
 document.querySelector('.coin-img').addEventListener('click', incrementCoin);
 
 // ----- UPGRADES DEFINIEREN -----
@@ -86,7 +65,7 @@ const upgrades = [
         levelElem: document.querySelector('.clicker-level'),
         increaseElem: document.querySelector('.clicker-increase'),
         cost: parseFloat(document.querySelector('.clicker-cost').innerHTML),
-        baseCost: parseFloat(document.querySelector('.clicker-cost').innerHTML), // basisprijs
+        baseCost: parseFloat(document.querySelector('.clicker-cost').innerHTML),
         level: 0,
         type: 'click',
         baseIncreaseDivisor: 50
@@ -158,6 +137,14 @@ upgrades.forEach(upg => {
     upg.costElem.innerHTML = formatNumber(upg.cost);
 });
 
+// ----- ENE ENIGE INFO-BOX -----
+let infoBox = document.createElement('div');
+infoBox.className = 'next-level-info';
+infoBox.style.position = 'absolute';
+infoBox.style.display = 'none';
+infoBox.style.pointerEvents = 'none';
+document.body.appendChild(infoBox);
+
 // ----- CLICK EN HOVER LOGICA -----
 upgrades.forEach(upg => {
 
@@ -165,9 +152,8 @@ upgrades.forEach(upg => {
     upg.elem.addEventListener('click', () => {
         if (parsedcoin >= upg.cost) {
 
-            // bereken increase op basis van baseCost
             let increase = Math.round(upg.baseCost / upg.baseIncreaseDivisor);
-            if (increase < 1) increase = 1; // minimaal 1
+            if (increase < 1) increase = 1;
 
             parsedcoin -= upg.cost;
             upg.level++;
@@ -181,7 +167,6 @@ upgrades.forEach(upg => {
                 upg.increaseElem.innerHTML = formatNumber(cpsVars[upg.cpsVar]);
             }
 
-            // prijs omhoog na aankoop
             upg.cost *= 1.2;
             upg.costElem.innerHTML = formatNumber(upg.cost);
 
@@ -193,22 +178,18 @@ upgrades.forEach(upg => {
 
     // Hover info realtime
     upg.elem.addEventListener('mouseenter', () => {
-        let info = document.createElement('div');
-        info.className = 'next-level-info';
-        document.body.appendChild(info);
-
-        const rect = upg.elem.getBoundingClientRect();
-        info.style.top = rect.top + 'px';
-        info.style.left = (rect.right + 10) + 'px';
-        info.style.display = 'block';
+        infoBox.style.display = 'block';
 
         function updateInfo() {
-            if (!document.body.contains(info)) return;
+            if (!infoBox) return;
 
             let increase = Math.round(upg.baseCost / upg.baseIncreaseDivisor);
             if (increase < 1) increase = 1;
 
-            info.innerText = upg.type === 'click'
+            const rect = upg.elem.getBoundingClientRect();
+            infoBox.style.top = `${rect.top}px`;
+            infoBox.style.left = `${rect.right + 10}px`;
+            infoBox.innerText = upg.type === 'click'
                 ? `+${formatNumber(increase)} coins per click`
                 : `+${formatNumber(increase)} coins per second`;
 
@@ -216,7 +197,7 @@ upgrades.forEach(upg => {
         }
         requestAnimationFrame(updateInfo);
 
-        upg.elem.addEventListener('mouseleave', () => info.remove(), { once: true });
+        upg.elem.addEventListener('mouseleave', () => infoBox.style.display = 'none', { once: true });
     });
 });
 
