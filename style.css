@@ -33,13 +33,16 @@ section {
 }
 
 .left {
-    flex: 0 0 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .left h2 {
     text-align: center;
     font-size: 30px;
     margin-bottom: 30px;
+    order: -1; 
 }
 
 .right {
@@ -47,7 +50,7 @@ section {
     max-width: 700px;
     height: 80vh;
     overflow-y: auto;
-    overflow-x: visible;
+    overflow-x: hidden;
     padding-right: 10px;
     box-sizing: border-box;
     background-color: #3a3a3a;
@@ -68,27 +71,7 @@ section {
     text-shadow: 2px 2px 3px orange;
 }
 
-.cost-info {
-    display: flex;
-    align-items: center; 
-    gap: 5px;
-}
-
-.coin-img:hover {
-    opacity: 0.9;
-    cursor: pointer;
-}
-
-.coin-img:active {
-    transform: scale(1.02);
-}
-
-.coin-img-container {
-    position: relative;
-}
-
 .upgrade {
-    position: relative;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -101,23 +84,6 @@ section {
     box-sizing: border-box;
     gap: 20px;
     cursor: pointer;
-}
-
-.next-level-info {
-    background-color: rgba(0, 0, 0, 0.75); /* semi-transparant zwart */
-    color: #FFD700; /* goudkleurige tekst, zoals je coins */
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: bold;
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-    white-space: nowrap;
-    z-index: 1000;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-}
-.upgrade:hover .next-level-info {
-    display: block;
 }
 
 .upgrade-img {
@@ -138,24 +104,43 @@ section {
     height: 25px;
 }
 
-.info-box {
-    position: absolute;
-    top: 50%;
-    left: 105%;
-    transform: translateY(-50%);
-    width: 180px;
-    padding: 10px;
-    background-color: rgb(90, 89, 90);
-    color: white;
-    font-size: 14px;
-    text-align: left;
-    border-radius: 5px;
-    display: none;
-    z-index: 1000;
+
+
+.cost-info {
+    display: flex;
+    align-items: center; 
+    gap: 5px; 
 }
 
-.upgrade:hover .info-box {
-    display: block;
+.cost-info p {
+    margin: 0; 
+    display: flex;
+    align-items: center;
+}
+
+.next-level-info {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: #FFD700;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    display: none;
+    z-index: 9999;
+    transition: opacity 0.2s ease;
+}
+
+.fade-up {
+    animation: fade-up 0.8s forwards;
+}
+
+@keyframes fade-up {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-50px) scale(1.2); opacity: 0; }
 }
 
 #warning {
@@ -191,13 +176,4 @@ section {
     justify-content: center;
     font-weight: bold;
     font-size: 22px;
-}
-
-.fade-up {
-    animation: fade-up 0.8s forwards;
-}
-
-@keyframes fade-up {
-    0% { transform: translateY(0); opacity: 1; }
-    100% { transform: translateY(-50px) scale(1.2); opacity: 0; }
 }

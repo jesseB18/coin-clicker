@@ -1,15 +1,15 @@
 "use strict";
 
 // ----- ELEMENTEN -----
-let coin = document.querySelector('.coins'); // toont aantal munten
-let parsedcoin = parseFloat(coin.innerHTML); // aantal munten als getal
-let warning = document.getElementById("warning"); // waarschuwing bij te weinig munten
+let coin = document.querySelector('.coins');
+let parsedcoin = parseFloat(coin.innerHTML);
+let warning = document.getElementById("warning");
 
-let cpctext = document.querySelector('#cpc-text'); // coins per click
-let cpstext = document.querySelector('#cps-text'); // coins per second
+let cpctext = document.querySelector('#cpc-text');
+let cpstext = document.querySelector('#cps-text');
 let coinimgcontainer = document.querySelector('.coin-img-container');
 
-let cpc = 1; // coins per click
+let cpc = 1;
 
 // CPS variabelen voor upgrades
 let cpsVars = {
@@ -21,7 +21,7 @@ let cpsVars = {
     world_companyCPS: 0
 };
 
-// ----- FUNCTIE VOOR HET FORMATTEREN VAN GETALLEN -----
+// ----- FORMATTEREN -----
 function formatNumber(num) {
     if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
     if (num >= 1e9)  return (num / 1e9).toFixed(2) + 'B';
@@ -30,7 +30,7 @@ function formatNumber(num) {
     return Math.round(num);
 }
 
-// ----- COIN CLICK FUNCTIE -----
+// ----- COIN CLICK -----
 window.incrementCoin = function(event) {
     parsedcoin += cpc;
     coin.innerHTML = formatNumber(parsedcoin);
@@ -57,7 +57,7 @@ window.incrementCoin = function(event) {
 
 document.querySelector('.coin-img').addEventListener('click', incrementCoin);
 
-// ----- UPGRADES DEFINIEREN -----
+// ----- UPGRADES -----
 const upgrades = [
     {
         elem: document.querySelector('.upgrade:nth-child(1)'),
@@ -132,12 +132,12 @@ const upgrades = [
     }
 ];
 
-// ----- FORMATTEER ALLE UPGRADE KOSTEN BIJ START -----
+// ----- FORMATTEER ALLE UPGRADE KOSTEN -----
 upgrades.forEach(upg => {
     upg.costElem.innerHTML = formatNumber(upg.cost);
 });
 
-// ----- ENE ENIGE INFO-BOX -----
+// ----- INFOBOX (HOVER TOOLTIPS) -----
 let infoBox = document.createElement('div');
 infoBox.className = 'next-level-info';
 infoBox.style.position = 'absolute';
@@ -145,13 +145,12 @@ infoBox.style.display = 'none';
 infoBox.style.pointerEvents = 'none';
 document.body.appendChild(infoBox);
 
-// ----- CLICK EN HOVER LOGICA -----
+// ----- CLICK & HOVER LOGICA -----
 upgrades.forEach(upg => {
 
     // Klikken op upgrade
     upg.elem.addEventListener('click', () => {
         if (parsedcoin >= upg.cost) {
-
             let increase = Math.round(upg.baseCost / upg.baseIncreaseDivisor);
             if (increase < 1) increase = 1;
 
@@ -169,39 +168,41 @@ upgrades.forEach(upg => {
 
             upg.cost *= 1.2;
             upg.costElem.innerHTML = formatNumber(upg.cost);
-
         } else {
             warning.style.display = "block";
             setTimeout(() => warning.style.display = "none", 2000);
         }
     });
 
-    // Hover info realtime
+    // Hover info realtime - AANGEPAST
     upg.elem.addEventListener('mouseenter', () => {
         infoBox.style.display = 'block';
 
         function updateInfo() {
             if (!infoBox) return;
 
-            let increase = Math.round(upg.baseCost / upg.baseIncreaseDivisor);
-            if (increase < 1) increase = 1;
-
             const rect = upg.elem.getBoundingClientRect();
             infoBox.style.top = `${rect.top}px`;
             infoBox.style.left = `${rect.right + 10}px`;
-            infoBox.innerText = upg.type === 'click'
-                ? `+${formatNumber(increase)} coins per click`
-                : `+${formatNumber(increase)} coins per second`;
 
+            let currentValue = upg.type === 'click' ? cpc : cpsVars[upg.cpsVar];
+            let nextIncrease = Math.round(upg.baseCost / upg.baseIncreaseDivisor);
+            if (nextIncrease < 1) nextIncrease = 1;
+
+            infoBox.innerHTML = upg.type === 'click'
+                ? `Huidig: <b>+${formatNumber(currentValue)}</b> per click<br>Volgende: +${formatNumber(nextIncrease)}`
+                : `Huidig: <b>+${formatNumber(currentValue)}</b> per second<br>Volgende: +${formatNumber(nextIncrease)}`;
+            
             requestAnimationFrame(updateInfo);
         }
+
         requestAnimationFrame(updateInfo);
 
         upg.elem.addEventListener('mouseleave', () => infoBox.style.display = 'none', { once: true });
     });
 });
 
-// ----- AUTOMATISCHE CPS UPDATE -----
+// ----- AUTO-UPDATE COINS PER SECOND -----
 let lastTime = performance.now();
 function update(time) {
     let delta = (time - lastTime) / 1000;
